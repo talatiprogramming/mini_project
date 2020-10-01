@@ -1,6 +1,6 @@
-from ..data_store import load_save as l 
-from ..core import table as t
-from ..models import classes as c
+from src.data_store import load_save as l 
+from src.core import table as t
+from src.models import classes as c
 #defines expected commands
 GET_NAMES = "1"
 GET_SONGS = "2"
@@ -164,7 +164,7 @@ def option_7():
         option_7()
     
 def option_8():
-    round_list = l.load_stuff("requests.csv")
+    round_list = l.load_stuff("src/data/requests.csv")
     server = requests_list[0]    
     t.print_round(f"{server} has the aux cable", requests_list)
     wait() 
@@ -172,10 +172,10 @@ def option_8():
  
      
         
-name_list = l.load_stuff("metalheads.csv")
-song_list = l.load_stuff("songlist.csv")
-fav_songs_list = l.load_stuff("favsongs.csv")
-load_requests = l.load_stuff("requests.csv")
+name_list = l.load_stuff("src/data/metalheads.csv")
+song_list = l.load_stuff("src/data/songlist.csv")
+fav_songs_list = l.load_stuff("src/data/favsongs.csv")
+load_requests = l.load_stuff("src/data/requests.csv")
 requests_list = c.RequestMaker().request_list
 
 def ultimate_menu():
@@ -193,12 +193,12 @@ def ultimate_menu():
 
         elif user_selection == ASSIGN_SONGS:
             option_3()
-            l.save_stuff("favsongs.csv", fav_songs_list)
+            l.save_stuff("src/data/favsongs.csv", fav_songs_list)
             ultimate_menu()                
                                 
         elif user_selection == REMOVE_SONG_PREF:              
             option_5()
-            l.save_stuff("favsongs.csv", fav_songs_list)
+            l.save_stuff("src/data/favsongs.csv", fav_songs_list)
             wait()
             ultimate_menu()
                     
@@ -208,7 +208,7 @@ def ultimate_menu():
 
         elif user_selection == CREATE_A_REQUEST:
             option_7()
-            l.save_stuff("requests.csv", requests_list)            
+            l.save_stuff("src/data/requests.csv", requests_list)            
             ultimate_menu()
         
         elif user_selection == VIEW_REQUESTS:
@@ -216,8 +216,8 @@ def ultimate_menu():
             ultimate_menu()        
 
         elif user_selection == RUN_AWAY:
-            l.save_stuff("metalheads.csv", name_list)
-            l.save_stuff("songlist.csv", song_list)
+            l.save_stuff("src/data/metalheads.csv", name_list)
+            l.save_stuff("src/data/songlist.csv", song_list)
             print("We hope you enjoyed your stay.")
             exit()     
         else:

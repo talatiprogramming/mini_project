@@ -1,4 +1,4 @@
-import tablecopy as t
+import tests.tablecopy as t
 
 
 def user_input():

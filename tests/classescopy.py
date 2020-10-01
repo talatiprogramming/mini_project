@@ -7,7 +7,7 @@ class Names:
         self.name = name
           
     def name_add(self, list):               
-        if all(x.isalpha() or x.isspace() for x in self.name) == False:
+        if self.name.isalpha() == False:
             print("You can't add that to the database.\n")            
         elif self.name in list:
             print("That entry already exists.\nPlease enter a unique name into the database.")            
@@ -20,44 +20,44 @@ class Names:
         else:
             print("I can't find that in the database.\n")
 
-class Song:
-    def __init__(self, song):
-        self.song = song
+class Drink:
+    def __init__(self, drink):
+        self.drink = drink
 
-    def song_add(self, list):               
-        if all(x.isalpha() or x.isspace() for x in self.song) == False:
+    def drink_add(self, list):               
+        if self.drink.isalpha() == False:
             print("You can't add that to the database.\n")            
-        elif self.song in list:
+        elif self.drink in list:
             print("That entry already exists.\nPlease enter a unique name into the database.")            
         else:   
-            return list.append(self.song)
+            return list.append(self.drink)
 
-    def del_song(self, list):                
-        if self.song in list:
-            list.remove(self.song)             
+    def del_drink(self, list):                
+        if self.drink in list:
+            list.remove(self.drink)             
         else:
             print("I can't find that in the database.\n")
 
-class RequestMaker:
-    def __init__(self, aux_guy=None, name=None, song=None, request_list=[]):
+class RoundMaker:
+    def __init__(self, server=None, name=None, drink=None, order_list=[]):
         self.name = name
-        self.song = song
-        self.aux_guy = aux_guy
-        self.request_list = request_list
+        self.drink = drink
+        self.server = server
+        self.order_list = order_list
 
-    def appoint_an_aux_guy(self):
-        self.request_list.append(self.aux_guy) 
+    def appoint_a_server(self):
+        self.order_list.append(self.server) 
 
-    def create_a_request(self,):
-        self.request_list.append(f"{self.name} requested {self.song}")
-        t.print_round(f"{self.request_list[0]} has the aux cable.", self.request_list)
+    def create_an_order(self,):
+        self.order_list.append(f"{self.name} ordered {self.drink}")
+        t.print_round(f"{self.order_list[0]} is making the round", self.order_list)
               
     def load_order(self):
-        x = l.load_stuff("requests.csv")
-        return x + self.request_list
+        x = l.load_stuff("drinksround.csv")
+        return x + self.order_list
         
     def save_order(self):
-        l.save_stuff("requests.csv", self.request_list)
+        l.save_stuff("drinksround.csv", self.order_list)
         
         
 
