@@ -1,6 +1,6 @@
-import load_save as l 
-import table as t
-import classes as c
+from ..data_store import load_save as l 
+from ..core import table as t
+from ..models import classes as c
 #defines expected commands
 GET_NAMES = "1"
 GET_SONGS = "2"

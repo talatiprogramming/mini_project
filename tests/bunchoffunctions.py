@@ -1,5 +1,6 @@
 import tablecopy as t
 
+
 def user_input():
     return str(input())  
 
