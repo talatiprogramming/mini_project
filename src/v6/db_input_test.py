@@ -13,17 +13,18 @@ def assign_a_song():
     if name_input in x:    
         y = m.import_songID()
         t.print_table("songs", y)
-        song_input = input("Choose a song number from the list: ")
+        song_input = str(input("Choose a song number from the list: "))
         for item in y:
-            if item.find(song_input) == -1:
-                print("That option doesn't exist.")
-                assign_a_song()
-            else:
-                m.update_entry("Names", f"fav_songID={song_input}", f"first_name='{name_input}'")
-                quit()
+            while song_input == item[0]:
+                continue
+            m.update_entry("Names", f"fav_songID={song_input}", f"first_name='{name_input}'")
+            quit()
+           
     else:
         print("That name doesn't exist.")
         assign_a_song()
+            
+        
 
 def option():
     fav_songs = m.return_fav_songs()
@@ -38,7 +39,6 @@ def option():
         print("Not a valid option.")
         option()
 
-option()
-     
+option() 
 
 

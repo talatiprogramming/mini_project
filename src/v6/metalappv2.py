@@ -6,10 +6,8 @@ from src.models import classes as c
 GET_NAMES = "1"
 GET_SONGS = "2"
 ASSIGN_SONGS = "3"
-VIEW_FAV_SONGS = "4"
-REMOVE_SONG_PREF = "5"
-CREATE_A_REQUEST = "6"
-VIEW_REQUESTS = "7"
+CREATE_A_REQUEST = "4"
+VIEW_REQUESTS = "5"
 RUN_AWAY = "0"
 MENU = f"""
 Welcome to METAL MASTER!
@@ -19,8 +17,6 @@ Please select a database to choose from:
 [{GET_NAMES}] People 
 [{GET_SONGS}] Songs
 [{ASSIGN_SONGS}] Assign favourite songs
-[{VIEW_FAV_SONGS}] View favourite songs
-[{REMOVE_SONG_PREF}] Remove favourite songs
 [{CREATE_A_REQUEST}] Makes some requests
 [{VIEW_REQUESTS}] View the queue
 [{RUN_AWAY}] Exit
@@ -70,10 +66,27 @@ def song_selector():
         print("\nOne of your options is not in the database.\n")
         song_selector()  
 
-def make_a_combo():
-    choice1 = name_selector()
-    choice2 = song_selector() 
-    return choice1 + " - " + choice2   
+# def make_a_combo():
+#     choice1 = name_selector()
+#     choice2 = song_selector() 
+#     return choice1 + " - " + choice2   
+def assign_a_song():
+    x = m.import_name()
+    t.print_table("names", x)
+    name_input = input("Choose a name from the list: ").title()
+    if name_input in x:    
+        y = m.import_songID()
+        t.print_table("songs", y)
+        song_input = str(input("Choose a song number from the list: "))
+        for item in y:
+            while song_input == item[0]:
+                continue
+            m.update_entry("Names", f"fav_songID={song_input}", f"first_name='{name_input}'")
+            option_3()
+           
+    else:
+        print("That name doesn't exist.")
+        assign_a_song()
 
 def option_1():
     name_list = m.import_name()
@@ -139,38 +152,20 @@ def option_2():
         option_2()
 
 def option_3():
-    assigned_song = make_a_combo()
-    if assigned_song not in fav_songs_list:
-        fav_songs_list.append(assigned_song)
-        t.print_table("fav songs", fav_songs_list)
+    fav_songs = m.return_fav_songs()
+    t.print_table("fav songs", fav_songs)
+    choice = input("\nWould you like to update this list?\ny or n?\n").lower()
+    if choice == "y":
+        assign_a_song()
+        option()
+    elif choice == "n":
+        ultimate_menu()
     else:
-        print("That combination has already been done.")
-        option_3() 
+        print("Not a valid option.")
+        option()
 
-def option_4():
-    t.print_table("fav songs", fav_songs_list)
-    del_assigned_song = make_a_combo()
-    if del_assigned_drink in fav_songs_list:
-        delete_item(fav_songs_list, del_assigned_song)
-        l.save_stuff("favsongs.csv", fav_songs_list)
-    else:
-        print("That combination does not exist.")
-        option_4()
 
-def option_5():
-    t.print_table("fav songs", fav_songs_list)
-    del_assigned_song = make_a_combo()
-    if del_assigned_song in fav_songs_list:
-        delete_item(fav_songs_list, del_assigned_song)        
-    else:
-        print("That combination does not exist.")
-        option_5()
-
-def option_6():
-    t.print_table("fav songs", fav_songs_list)
-    wait()
-
-def option_7():    
+def option_4():    
     aux_guy = aux_manager()
     name1 = name_selector()
     drink1 = song_selector()
@@ -187,9 +182,9 @@ def option_7():
             exit_selection = str(input("\nWould you like to continue?\n[1] Yes\n[2] No\n"))
     else:
         print("That ain't a valid command buster.")
-        option_7()
+        option_4()
     
-def option_8():
+def option_5():
     round_list = l.load_stuff("src/data/requests.csv")
     server = requests_list[0]    
     t.print_round(f"{server} has the aux cable", requests_list)
@@ -218,34 +213,25 @@ def ultimate_menu():
             ultimate_menu()
 
         elif user_selection == ASSIGN_SONGS:
-            option_3()
-            l.save_stuff("src/data/favsongs.csv", fav_songs_list)
+            option_3()            
             ultimate_menu()                
                                 
-        elif user_selection == REMOVE_SONG_PREF:              
-            option_5()
-            l.save_stuff("src/data/favsongs.csv", fav_songs_list)
-            wait()
-            ultimate_menu()
-                    
-        elif user_selection == VIEW_FAV_SONGS:          
-            option_6()
-            ultimate_menu()
+
 
         elif user_selection == CREATE_A_REQUEST:
-            option_7()
+            option_4()
             l.save_stuff("src/data/requests.csv", requests_list)            
             ultimate_menu()
         
         elif user_selection == VIEW_REQUESTS:
-            option_8()
+            option_5()
             ultimate_menu()        
 
         elif user_selection == RUN_AWAY:
-            # l.save_stuff("src/data/metalheads.csv", name_list)
             l.save_stuff("src/data/songlist.csv", song_list)
             print("We hope you enjoyed your stay.")
             exit()     
+            
         else:
             print(f"{str(user_selection)} is not a valid command.\n")
             wait()
