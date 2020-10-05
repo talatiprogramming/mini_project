@@ -1,39 +1,44 @@
-import pymysql
+from src.data_store import mysql_db as m 
+from src.core import table as t 
 
-connection  = pymysql.connect(
-        host = "localhost",
-        port =  33066,
-        user = "root",
-        passwd = "password",
-        db = "test2"
-    )
+# x = m.import_songID()
+# t.print_table("songs", x)
 
-cursor = connection.cursor()
 
-f_name_input = input("Enter a first name: ").title()
-# surname_input = input("Enter a last name: ").title()
-# entry_string = f"\'{f_name_input}\', \'{surname_input}\'"
-def insert_name_entry(string):
-    try:
-        cursor.execute(f"INSERT INTO Names (first_name, last_name) VALUES ({string});")
-        connection.commit()
-    finally:
-        cursor.close()
-        connection.close()
 
-def import_name():
-    try:
-        cursor.execute("SELECT first_name FROM Names")
-        imported_name = cursor.fetchall()
-        for item in imported_name:
-            print(item[0])
-    finally:
-        cursor.close()
-        connection.close()      
+def assign_a_song():
+    x = m.import_name()
+    t.print_table("names", x)
+    name_input = input("Choose a name from the list: ").title()
+    if name_input in x:    
+        y = m.import_songID()
+        t.print_table("songs", y)
+        song_input = input("Choose a song number from the list: ")
+        for item in y:
+            if item.find(song_input) == -1:
+                print("That option doesn't exist.")
+                assign_a_song()
+            else:
+                m.update_entry("Names", f"fav_songID={song_input}", f"first_name='{name_input}'")
+                quit()
+    else:
+        print("That name doesn't exist.")
+        assign_a_song()
 
-def remove_name_entry(self):
-    cursor.execute(f"DELETE FROM Names WHERE first_name=\'{self.name}\'")
-    connection.commit()   
-# insert_name_entry(entry_string)
+def option():
+    fav_songs = m.return_fav_songs()
+    t.print_table("fav songs", fav_songs)
+    choice = input("\nWould you like to update this list?\ny or n?\n").lower()
+    if choice == "y":
+        assign_a_song()
+        option()
+    elif choice == "n":
+        quit()
+    else:
+        print("Not a valid option.")
+        option()
 
-remove_name_entry(f_name_input)
+option()
+     
+
+

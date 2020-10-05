@@ -19,10 +19,3 @@ def print_table(title, data):
         print(f"| {item}" + " " * (get_table_width(title, data) - len(f"| {item}")) + " |")
     print_separator(title, data)
 
-def print_round(title, data):
-    print_separator(title, data)
-    print(f"| {title.upper()}" + " " * (get_table_width(title, data) - len(f"| {title.upper()}")) + " |")
-    print_separator(title, data)
-    for i in range(1, len(data)):        
-        print(f"| {data[i]}" + " " * (get_table_width(title, data) - len(f"| {data[i]}")) + " |")
-    print_separator(title, data)
