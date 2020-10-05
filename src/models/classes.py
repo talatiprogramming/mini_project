@@ -36,7 +36,7 @@ class RequestMaker:
 
     def create_a_request(self,):
         self.request_list.append(f"{self.name} requested {self.song}")
-        t.print_round(f"{self.request_list[0]} has the aux cable.", self.request_list)
+        t.print_requests(f"{self.aux_guy} has the aux cable.", self.request_list)
               
     def load_order(self):
         x = l.load_stuff("requests.csv")

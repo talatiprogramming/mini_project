@@ -2,6 +2,7 @@ from src.data_store import mysql_db as m
 from src.data_store import load_save as l 
 from src.core import table as t
 from src.models import classes as c
+
 #defines expected commands
 GET_NAMES = "1"
 GET_SONGS = "2"
@@ -45,31 +46,40 @@ def delete_item(list, item):
     list.remove(item)
 
 def aux_manager():
-    return str(input("Who's in charge of the aux cable?\n"))
+    name_list = m.import_name()
+    x = str(input("Who's in charge of the aux cable?\n")).title()
+    if x in name_list:
+        return x
+    else:
+        print("Not a valid name.\n")
+        aux_manager()
     
 def name_selector():
+    name_list = m.import_name()
     t.print_table("names", name_list)
-    person_select = str(input("Please type a name from the database:\n")).title()        
+    person_select = str(input("Please type a name from the list:\n")).title()        
     if person_select in name_list:
         return person_select 
     else:
-        print("\nOne of your options is not in the database.\n")
+        print("\nNot a valid option.\n")
         name_selector()
     
 
 def song_selector():
+    song_list = m.import_songID()
     t.print_table("songs", song_list)
-    song_select = str(input("Please assign a song from the database:\n")).title()
-    if song_select in song_list:
-        return song_select
+    song_select = str(input("Please assign a song no. from the list:\n"))
+    if song_select.isnumeric() == True:
+        for item in song_list:
+            if song_select == item[0]:                
+                return item[2:]
+            
     else:
-        print("\nOne of your options is not in the database.\n")
+        print("\nNot a valid option.\n")
         song_selector()  
+            
 
-# def make_a_combo():
-#     choice1 = name_selector()
-#     choice2 = song_selector() 
-#     return choice1 + " - " + choice2   
+ 
 def assign_a_song():
     x = m.import_name()
     t.print_table("names", x)
@@ -181,21 +191,16 @@ def option_4():
             order2.create_a_request()
             exit_selection = str(input("\nWould you like to continue?\n[1] Yes\n[2] No\n"))
     else:
-        print("That ain't a valid command buster.")
+        print("That's not a valid option.")
         option_4()
     
 def option_5():
-    round_list = l.load_stuff("src/data/requests.csv")
+    requests_list = l.load_stuff("src/data/requests.csv")
     server = requests_list[0]    
-    t.print_round(f"{server} has the aux cable", requests_list)
+    t.print_requests(f"{server} has the aux cable", requests_list)
     wait() 
- 
- 
-     
-        
-# name_list = l.load_stuff("src/data/metalheads.csv")
-song_list = l.load_stuff("src/data/songlist.csv")
-fav_songs_list = l.load_stuff("src/data/favsongs.csv")
+
+
 load_requests = l.load_stuff("src/data/requests.csv")
 requests_list = c.RequestMaker().request_list
 
@@ -215,8 +220,6 @@ def ultimate_menu():
         elif user_selection == ASSIGN_SONGS:
             option_3()            
             ultimate_menu()                
-                                
-
 
         elif user_selection == CREATE_A_REQUEST:
             option_4()
@@ -228,7 +231,6 @@ def ultimate_menu():
             ultimate_menu()        
 
         elif user_selection == RUN_AWAY:
-            l.save_stuff("src/data/songlist.csv", song_list)
             print("We hope you enjoyed your stay.")
             exit()     
             
@@ -236,6 +238,9 @@ def ultimate_menu():
             print(f"{str(user_selection)} is not a valid command.\n")
             wait()
             ultimate_menu()
+            
+                                
+
 
 ultimate_menu()
                    
