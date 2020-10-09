@@ -140,7 +140,7 @@ def option_2():
             print("You can't add that to the database")
             option_2()
         elif x in song_list:
-            print("That song already exist. Add a new one.")
+            print("That song already exists. Add a new one.")
             option_2()
         else:
             song_to_add = c.Song(x)
@@ -178,16 +178,16 @@ def option_3():
 def option_4():    
     aux_guy = aux_manager()
     name1 = name_selector()
-    drink1 = song_selector()
-    order1 = c.RequestMaker(aux_guy, name1, drink1, requests_list)
+    song1 = song_selector()
+    order1 = c.RequestMaker(aux_guy, name1, song1, requests_list)
     order1.appoint_an_aux_guy()
     order1.create_a_request()
     exit_selection = str(input("\nWould you like to continue?\n[1] Yes\n[2] No\n"))
     if exit_selection == "1" or exit_selection == "2":
         while exit_selection != "2":
             name2 = name_selector()
-            drink2 = song_selector()
-            order2 = c.RequestMaker(aux_guy, name2, drink2, requests_list)
+            song2 = song_selector()
+            order2 = c.RequestMaker(aux_guy, name2, song2, requests_list)
             order2.create_a_request()
             exit_selection = str(input("\nWould you like to continue?\n[1] Yes\n[2] No\n"))
     else:

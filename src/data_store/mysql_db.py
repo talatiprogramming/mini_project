@@ -23,12 +23,12 @@ def import_name():
         cursor.close()
         connection.close()
     
-def import_song():
+def import_song(condition=None):
     connection  = make_connection()
     cursor = connection.cursor()
     name_list = []
     try:
-        cursor.execute("SELECT song_title FROM Songs")
+        cursor.execute(f"SELECT song_title FROM Songs {condition};")
         imported_name = cursor.fetchall()
         for item in imported_name:
             name_list.append(item[0])
@@ -40,16 +40,31 @@ def import_song():
 def import_songID():
     connection  = make_connection()
     cursor = connection.cursor()
-    name_list = []
+    name_list = {}
     try:
         cursor.execute("SELECT * FROM Songs")
         imported_name = cursor.fetchall()
         for item in imported_name:
-            name_list.append(f"{item[0]} {item[1]}")
+            name_list.update({item[0]: [item[1], item[2], item[3]]})
         return name_list
     finally:
         cursor.close()
         connection.close()
+
+def import_album():
+    connection  = make_connection()
+    cursor = connection.cursor()
+    name_list = {}
+    try:
+        cursor.execute("SELECT * FROM Albums")
+        imported_name = cursor.fetchall()
+        for item in imported_name:
+            name_list.update({item[0]: [item[1], item[2]]})
+        return name_list
+    finally:
+        cursor.close()
+        connection.close()
+
 
 def insert_entry(string1, string2):
         connection  = make_connection()
