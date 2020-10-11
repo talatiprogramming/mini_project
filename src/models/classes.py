@@ -9,10 +9,10 @@ class Names:
         self.name = name
 
     def insert_name_entry(self):
-        m.insert_entry("Names (first_name)", self.name)
+        m.insert_entry("Names (name)", f"(\'{self.name}\')")
         
     def remove_name_entry(self):
-        m.remove_entry("Names", "first_name", self.name) 
+        m.remove_entry("Names", f"name=\'{self.name}\'") 
 
 class Song:
     def __init__(self, song):

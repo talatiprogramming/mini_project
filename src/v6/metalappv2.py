@@ -12,7 +12,7 @@ VIEW_REQUESTS = "5"
 RUN_AWAY = "0"
 MENU = f"""
 Welcome to METAL MASTER!
-Create a list of your mates requests and dunk on them for being posers!
+Create a shared music queue with your mates and dunk on them for being posers!
 Please select a database to choose from:
 
 [{GET_NAMES}] People 
@@ -39,7 +39,7 @@ def song_input():
    
 # Pauses the script in the middle of the while loop
 def wait():
-    input("Press ENTER to continue\n")
+    input("\nPress ENTER to continue\n")
 
 # Deletes item from a list
 def delete_item(list, item):
@@ -76,8 +76,7 @@ def song_selector():
             
     else:
         print("\nNot a valid option.\n")
-        song_selector()  
-            
+        song_selector()             
 
  
 def assign_a_song():
@@ -129,36 +128,50 @@ def option_1():
         print("That's not a valid option.")
         option_1()
         
+def song_option():
+    song_data = m.import_song()
+    song_list = []
+    for item in song_data.values():
+        song_list.append(item[0])
+    t.print_table("songs", song_list)
+    wait()
+
+def album_option():
+    album_list = m.import_album()
+    album_stuff = []    
+    for key, value in album_list.items():
+        album_stuff.append(f"{key} {value[0]}, {value[1]}")
+    t.print_table("albums", album_stuff)
+    try:
+        choice = input("\nSelect an album to view or enter 0 to return to menu.\n")
+        for key in album_list.keys():
+            if choice == "0":
+                continue
+            if choice == key:
+                song_list = m.import_song_title(f"WHERE albumID={choice}")
+                x = album_list[choice]
+                t.print_table(f"{x[0]}", song_list)                
+                wait()
+                album_option()
+            if choice not in album_list.keys():
+                print("\nNot a valid option.\n")
+                album_option()
+    except ValueError:
+        print("\nNot a valid option.\n")
+        album_option()
 
 def option_2():
-    song_list = m.import_song()
-    t.print_table("songs", song_list)
-    song_option = str(input("\nWould you like to edit this database?\n[1] Add song\n[2] Remove song\n[3] Return to menu\n"))
-    if song_option == "1":
-        x = song_input()
-        if x.isnumeric == True:
-            print("You can't add that to the database")
-            option_2()
-        elif x in song_list:
-            print("That song already exists. Add a new one.")
-            option_2()
-        else:
-            song_to_add = c.Song(x)
-            song_to_add.insert_song_entry()
-            option_2()
-    elif song_option == "2":
-        y = song_input()
-        if y in song_list:
-            song_to_del = c.Song(y)
-            song_to_del.remove_song_entry()
-            option_2()
-        else:
-            print("That song does not exist.")
-            option_2()            
-    elif song_option == "3":
-        wait()
+    choice = str(input("Would you like to:\n[1] View available albums?\n[2] View all songs?\n[3] Exit?\n"))
+    if choice == "1":
+        album_option()
+        option_2()
+    elif choice == "2":
+        song_option()
+        option_2()
+    elif choice == "3":
+        continue
     else:
-        print("That's not a valid option.")
+        print("Not a valid option.")
         option_2()
 
 def option_3():

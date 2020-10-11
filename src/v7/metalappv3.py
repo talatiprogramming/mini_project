@@ -17,8 +17,8 @@ Please select a database to choose from:
 
 [{GET_NAMES}] People 
 [{GET_SONGS}] Songs
-[{ASSIGN_SONGS}] Assign favourite songs
-[{CREATE_A_REQUEST}] Makes some requests
+[{ASSIGN_SONGS}] Edit favourite songs
+[{CREATE_A_REQUEST}] Create a music queue
 [{VIEW_REQUESTS}] View the queue
 [{RUN_AWAY}] Exit
 """
@@ -66,41 +66,142 @@ def name_selector():
     
 
 def song_selector():
-    song_list = m.import_songID()
+    song_data = m.import_song()
+    song_list = []
+    for key, value in song_data.items():
+        song_list.append(f"{key} {value[0]}, {value[2]}")
     t.print_table("songs", song_list)
     song_select = str(input("Please assign a song no. from the list:\n"))
     if song_select.isnumeric() == True:
-        for item in song_list:
-            if song_select == item[0]:                
-                return item[2:]
+        for key in song_data.keys():
+            if song_select == key:
+                x = song_data[song_select]                
+                return f"{x[0]}, {x[2]}"
             
     else:
         print("\nNot a valid option.\n")
         song_selector()             
 
- 
-def assign_a_song():
-    x = m.import_name()
-    t.print_table("names", x)
-    name_input = input("Choose a name from the list: ").title()
-    if name_input in x:    
-        y = m.import_songID()
-        t.print_table("songs", y)
-        song_input = str(input("Choose a song number from the list: "))
-        for item in y:
-            while song_input == item[0]:
-                continue
-            m.update_entry("Names", f"fav_songID={song_input}", f"first_name='{name_input}'")
-            option_3()
-           
+
+def view_fav_songs():    
+    fav_album = m.import_fav_songs()
+    fav_song_list = []
+    for value in fav_album.values():            
+        fav_song_list.append(f"{value[0]} - {value[1]}, {value[2]}")
+    t.print_table(f"Favourites", fav_song_list)
+
+def add_preference():
+    names_list = m.import_name()
+    t.print_table("names", names_list)
+    choice = str(input("\nSelect a name from the list\n")).title()
+    choice2 = str(input("Would you like to:\n[1] Assign a whole album\n[2] Individual songs?\n[3] Exit?\n"))
+    if choice2 == "1":
+        album_list = m.import_album()
+        album_stuff = []    
+        for key, value in album_list.items():
+            album_stuff.append(f"{key} {value[0]}, {value[1]}")
+        t.print_table("albums", album_stuff)
+        choice3 = str(input("Choose an album no. from the list.\n"))
+        if choice3 in album_list.keys(): 
+            album_choice = m.import_song_choice("s.song_title, a.album_name", "Songs as s, Albums as a", f"s.albumID={choice3} AND a.albumID={choice3}")
+            try:
+                for item in album_choice:
+                    m.insert_entry("Favourites (name, song_title, album_name)", f"\'{choice}\', \'{item[0]}\', \'{item[1]}\'")
+                print("Your preferences have been saved.")
+            except:
+                print("There was an issue in saving your preferences.") 
+        else:
+            print("Not a valid option")
+            assign_an_album()
+    elif choice2 == "2":
+        song_data = m.import_song()
+        song_list = []
+        for key, value in song_data.items():
+            song_list.append(f"{key} {value[0]}, {value[2]} - {value[3]}")
+        t.print_table("songs", song_list)
+        choice4 = str(input("Choose a song no. from the list.\n"))
+        if choice4 in song_data.keys():
+            try:
+                song_choice = song_data[choice4]
+                m.insert_entry("Favourites (name, song_title, album_name)", f"\'{choice}\', \'{song_choice[0]}\', \'{song_choice[2]}\'")
+                print("Your preferences have been saved.\n")
+            except:
+                print("There was an issue in saving your preferences.\n")
+            choice5 = str(input("Would you like to save another preference?:\n[1] Yes\n[2] No\n"))
+            if choice5 == "1":
+                add_preference()
+            elif choice5 == "2":
+                ultimate_menu()
+            else:
+                print("Not a valid option")
+                del_preference()
+        else:
+            print("Not a valid option.")
+            add_preference()
+    elif choice2 == "3":
+        ultimate_menu()
     else:
-        print("That name doesn't exist.")
-        assign_a_song()
+        print("Not a valid option")
+        add_preference()
+
+def del_preference():
+    fav_songs = m.import_fav_songs()
+    fav_song_list = []
+    for key, value in fav_songs.items():
+        fav_song_list.append(f"{key} {value[0]} - {value[1]}, {value[2]}")
+    t.print_table("favourites", fav_song_list)
+    choice = str(input("\nChoose an record no. from the list.\n"))
+    if choice in fav_songs.keys():
+        try:
+            m.remove_entry("Favourites", f"favID={choice}")
+            print("Your preference was removed successfully.\n")
+        except:
+            print("There was an issue with deleting your preference.\n")
+        choice2 = str(input("Would you like to delete another record?\n[1] Yes\n[2] No\n"))
+        if choice2 == "1":
+            del_preference()
+        elif choice2 == "2":
+            ultimate_menu()
+        else:
+            print("Not a valid option")
+            del_preference()
+    else:
+        print("Not a valid option.")
+        del_preference()
+
+        
+def song_option():
+    song_data = m.import_song()
+    song_list = []
+    for item in song_data.values():
+        song_list.append(f"{item[0]}, {item[2]} - {item[3]}")
+    t.print_table("songs", song_list)
+    wait()
+
+def album_option():
+    album_list = m.import_album()
+    album_stuff = []    
+    for key, value in album_list.items():
+        album_stuff.append(f"{key} {value[0]}, {value[1]}")
+    t.print_table("albums", album_stuff)
+    choice = input("\nSelect an album to view or enter x to return to menu.\n")
+    for key in album_list.keys():
+        if choice == "x":
+            ultimate_menu()
+        elif choice == key:
+            song_list = m.import_song_title(f"WHERE albumID={choice}")
+            x = album_list[choice]
+            t.print_table(f"{x[0]}", song_list)                
+            wait()
+            album_option()
+        elif choice not in album_list.keys():
+            print("\nNot a valid option.\n")
+            album_option()
 
 def option_1():
     name_list = m.import_name()
     t.print_table("names", name_list)
-    add_name_option = str(input("\nWould you like to edit this database?\n[1] Add name\n[2] Remove name\n[3] Return to menu\n"))
+    add_name_option = str(input("\nPlease select an option:\n[1] Add name\n[2] Remove name\n[3] Return to menu\n"))
     if add_name_option == "1":
         x = name_input()
         if x.isnumeric == True:
@@ -123,45 +224,14 @@ def option_1():
             print("That name does not exist")
             option_1()
     elif add_name_option == "3":        
-        wait()
+        ultimate_menu()
     else:
         print("That's not a valid option.")
-        option_1()
-        
-def song_option():
-    song_data = m.import_song()
-    song_list = []
-    for item in song_data.values():
-        song_list.append(item[0])
-    t.print_table("songs", song_list)
-    wait()
-
-def album_option():
-    album_list = m.import_album()
-    album_stuff = []    
-    for key, value in album_list.items():
-        album_stuff.append(f"{key} {value[0]}, {value[1]}")
-    t.print_table("albums", album_stuff)
-    try:
-        choice = input("\nSelect an album to view or enter 0 to return to menu.\n")
-        for key in album_list.keys():
-            if choice == "0":
-                continue
-            if choice == key:
-                song_list = m.import_song_title(f"WHERE albumID={choice}")
-                x = album_list[choice]
-                t.print_table(f"{x[0]}", song_list)                
-                wait()
-                album_option()
-            if choice not in album_list.keys():
-                print("\nNot a valid option.\n")
-                album_option()
-    except ValueError:
-        print("\nNot a valid option.\n")
-        album_option()
+        option_1()    
+    
 
 def option_2():
-    choice = str(input("Would you like to:\n[1] View available albums?\n[2] View all songs?\n[3] Exit?\n"))
+    choice = str(input("Please select an option:\n[1] View all albums\n[2] View all songs\n[3] Return to menu\n"))
     if choice == "1":
         album_option()
         option_2()
@@ -169,23 +239,25 @@ def option_2():
         song_option()
         option_2()
     elif choice == "3":
-        continue
+        ultimate_menu()
     else:
         print("Not a valid option.")
         option_2()
 
 def option_3():
-    fav_songs = m.return_fav_songs()
-    t.print_table("fav songs", fav_songs)
-    choice = input("\nWould you like to update this list?\ny or n?\n").lower()
-    if choice == "y":
-        assign_a_song()
-        option()
-    elif choice == "n":
+    view_fav_songs()
+    choice = str(input("Please select an option:\n[1] Assign a preference\n[2] Delete a preference\n[3] Return to menu\n"))
+    if choice == "1":
+        add_preference()
+        option_3()
+    elif choice == "2":
+        del_preference()
+        option_3()
+    elif choice == "3":
         ultimate_menu()
     else:
-        print("Not a valid option.")
-        option()
+        print("Not a valid option")
+        option_3() 
 
 
 def option_4():    
