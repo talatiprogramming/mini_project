@@ -22,7 +22,7 @@ Please select a database to choose from:
 [{VIEW_REQUESTS}] View the queue
 [{RUN_AWAY}] Exit
 """
-
+# Git is fun
 
 def selection_screen():
     print(MENU)
