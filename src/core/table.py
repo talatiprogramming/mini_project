@@ -26,3 +26,5 @@ def print_requests(title, data):
     for i in range(1, len(data)):                      
         print(f"| {data[i]}" + " " * (get_table_width(title, data) - len(f"| {data[i]}")) + " |")
     print_separator(title, data)
+
+# This comment was left by Alex :)
