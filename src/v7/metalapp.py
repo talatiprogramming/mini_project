@@ -61,8 +61,7 @@ def name_selector():
     if person_select in name_list:
         return person_select 
     else:
-        print("\nNot a valid option.\n")
-        name_selector()
+        print("\nNot a valid option.\n")        
     
 
 def song_selector():
@@ -72,15 +71,14 @@ def song_selector():
         song_list.append(f"{key} {value[0]}, {value[2]}")
     t.print_table("songs", song_list)
     song_select = str(input("Please assign a song no. from the list:\n"))
-    if song_select.isnumeric() == True:
+    if song_select in song_data.keys():
         for key in song_data.keys():
-            if song_select == key:
-                x = song_data[song_select]                
-                return f"{x[0]}, {x[2]}"
-            
+            x = song_data[song_select]                
+            return f"{x[0]}, {x[2]}"
     else:
-        print("\nNot a valid option.\n")
-        song_selector()             
+        print("Not a valid option.")
+        
+                        
 
 
 def view_fav_songs():    
@@ -260,10 +258,11 @@ def option_3():
         option_3() 
 
 
-def option_4():    
+def option_4():
+    requests_list = []    
     aux_guy = aux_manager()
     name1 = name_selector()
-    song1 = song_selector()
+    song1 = song_selector()        
     order1 = c.RequestMaker(aux_guy, name1, song1, requests_list)
     order1.appoint_an_aux_guy()
     order1.create_a_request()
@@ -271,13 +270,16 @@ def option_4():
     if exit_selection == "1" or exit_selection == "2":
         while exit_selection != "2":
             name2 = name_selector()
-            song2 = song_selector()
+            song2 = song_selector()            
             order2 = c.RequestMaker(aux_guy, name2, song2, requests_list)
             order2.create_a_request()
             exit_selection = str(input("\nWould you like to continue?\n[1] Yes\n[2] No\n"))
     else:
         print("That's not a valid option.")
         option_4()
+    
+    
+            
     
 def option_5():
     requests_list = l.load_stuff("src/data/requests.csv")
@@ -287,7 +289,7 @@ def option_5():
 
 
 load_requests = l.load_stuff("src/data/requests.csv")
-requests_list = c.RequestMaker().request_list
+# requests_list = c.RequestMaker().request_list
 
 def ultimate_menu():
     while True:           
@@ -308,7 +310,7 @@ def ultimate_menu():
 
         elif user_selection == CREATE_A_REQUEST:
             option_4()
-            l.save_stuff("src/data/requests.csv", requests_list)            
+            l.save_stuff("src/data/requests.csv", c.RequestMaker().request_list)            
             ultimate_menu()
         
         elif user_selection == VIEW_REQUESTS:
